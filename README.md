@@ -13,6 +13,62 @@ Many applications need to send notifications, but implementing email functionali
 3. **Reliable Delivery**: Built-in retry logic ensures reliable email delivery.
 4. **Easy Deployment**: Containerized with Docker and ready for Google Cloud Run deployment.
 
+## Features
+
+- **Retry Logic**: Automatically retries failed email attempts up to 3 times
+- **Input Validation**: Validates all email fields before sending
+- **Flexible Recipients**: Use default recipient or specify per request
+- **Health Check Endpoint**: Built-in health check for monitoring
+- **Comprehensive Logging**: Detailed logging for debugging and monitoring
+- **SSL Security**: Uses SSL for secure SMTP connection
+- **Docker Support**: Fully containerized for easy deployment
+- **Cloud Ready**: Optimized for Google Cloud Run
+
+## API Documentation
+
+### Send Email Endpoint
+
+`POST /send-email`
+
+Request body:
+```json
+{
+    "subject": "Your email subject",
+    "body": "Your email content",
+    "recipient_email": "recipient@example.com" // Optional if default is set
+}
+```
+
+Response (success):
+```json
+{
+    "message": "Email sent successfully",
+    "recipient": "recipient@example.com"
+}
+```
+
+Response (error):
+```json
+{
+    "error": "Error message description"
+}
+```
+
+Common error codes:
+- `400`: Invalid request (missing fields, invalid format)
+- `500`: Server error (SMTP failure, configuration issues)
+
+### Health Check Endpoint
+
+`GET /health`
+
+Response:
+```json
+{
+    "status": "healthy"
+}
+```
+
 ## Setup Guide
 
 ### Prerequisites
@@ -96,4 +152,32 @@ The `recipient_email` field is optional. If not provided, it will use the defaul
 
 ## Contributing
 
-Feel free to open issues or submit pull requests. All contributions are welcome! 
+Feel free to open issues or submit pull requests. All contributions are welcome!
+
+## Error Handling
+
+The service includes comprehensive error handling:
+
+1. **Input Validation**:
+   - Empty subject or body
+   - Missing recipient email
+   - Invalid JSON payload
+
+2. **SMTP Errors**:
+   - Connection failures (automatic retry)
+   - Authentication errors
+   - Timeout issues
+
+3. **Environment Errors**:
+   - Missing environment variables
+   - Invalid credentials
+
+## Monitoring
+
+The service uses Python's logging module with INFO level by default. Important events that are logged:
+
+- Email sending attempts
+- Successful deliveries
+- Failed attempts with retry information
+- Validation errors
+- SMTP connection issues 
